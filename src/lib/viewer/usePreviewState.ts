@@ -12,7 +12,7 @@ const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--cha
 export const DEMO_DURATION = 10;
 
 function makeObject(n: number, existing: ViewerObject[], rand: () => number): ViewerObject {
-  const asset = ASSETS[(n - 1) % ASSETS.length];
+  const asset = ASSETS[Math.floor(rand() * ASSETS.length)];
   const instance = existing.filter((o) => o.assetName === asset).length + 1;
   return {
     id: `obj-${String(n).padStart(2, "0")}`,
@@ -31,15 +31,13 @@ export function usePreviewState() {
   const counter = useRef(0);
   const [objects, setObjects] = useState<ViewerObject[]>(() => {
     const list: ViewerObject[] = [];
-    for (let i = 0; i < 3; i++) {
-      counter.current++;
-      list.push(makeObject(counter.current, list, rand));
-    }
+    for (let i = 0; i < 3; i++) list.push(makeObject(i + 1, list, rand));
     list[0] = { ...list[0], state: "ready", quality: "Q2" };
     list[1] = { ...list[1], state: "ready", quality: "Q1" };
     list[2] = { ...list[2], state: "loading", quality: null };
     return list;
   });
+  if (counter.current < 3) counter.current = 3;
   const [mediaTime, setMediaTime] = useState(0);
   const [loop, setLoop] = useState(0);
 
@@ -54,16 +52,17 @@ export function usePreviewState() {
     return () => clearInterval(id);
   }, []);
 
+  const objectsRef = useRef(objects);
+  objectsRef.current = objects;
+
   const onAddObject = useCallback(() => {
     counter.current++;
-    const n = counter.current;
-    setObjects((prev) => {
-      const obj = makeObject(n, prev, rand);
-      setTimeout(() => {
-        setObjects((p) => p.map((o) => (o.id === obj.id ? { ...o, state: "ready", quality: "Q0" } : o)));
-      }, 1400);
-      return [...prev, obj];
-    });
+    const obj = makeObject(counter.current, objectsRef.current, rand);
+    objectsRef.current = [...objectsRef.current, obj];
+    setObjects(objectsRef.current);
+    setTimeout(() => {
+      setObjects((p) => p.map((o) => (o.id === obj.id ? { ...o, state: "ready", quality: "Q0" } : o)));
+    }, 1400);
   }, [rand]);
 
   const onRemoveObject = useCallback((id: string) => {
