@@ -3,7 +3,7 @@ import type { ViewerObject } from "@/lib/viewer/types";
 import { mulberry32 } from "@/lib/viewer/placement";
 
 /** Decorative placeholder artwork ONLY. Not a renderer, not a splat decoder. */
-const W = 1600, H = 1000, CX = 800, CY = 400, F = 1000, D = 8, CAM_H = 1.7;
+const W = 1600, H = 1000, CX = 800, CY = 380, F = 1250, D = 6.5, CAM_H = 1.7;
 
 function project(x: number, y: number, z: number) {
   const zc = z + D;
