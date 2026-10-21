@@ -84,7 +84,7 @@ export function PreviewScene({ objects }: { objects: ViewerObject[] }) {
             <ellipse cx={base.x} cy={base.y} rx={base.s * 0.35} ry={base.s * 0.08} fill={o.color} opacity={0.12} />
             {pts.map((p, i) => {
               const s = project(o.position.x + p.x, p.y, o.position.z);
-              return <circle key={i} cx={s.x} cy={s.y} r={Math.max(0.8, s.s * 0.012)} fill={o.color} opacity={p.o * 0.75} />;
+              return <circle key={i} cx={s.x} cy={s.y} r={Math.max(0.8, s.s * 0.009)} fill={o.color} opacity={p.o * 0.75} />;
             })}
           </g>
         );
